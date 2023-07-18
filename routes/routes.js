@@ -8,6 +8,8 @@ const testMiddleware = require("../middlware/testMiddleware");
 
 const userRoutes = [
     {get:"/user/get/all",middleware:[],fn:userController.getAllUser},
+    {get:"/user/get/:id",middleware:[],fn:userController.loginUser},
+    {post:"/user/add",middleware:[],fn:userController.registerUser},
 ]
 
 const urlRoutes = [

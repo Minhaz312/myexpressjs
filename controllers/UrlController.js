@@ -13,6 +13,7 @@ app.getAllUrl = (req,res) => {
 }
 
 app.addUrl = (req,res) => {
+    console.log("req.params: ",req.params)
     send(res,200,{success:true,message:"url added successfully"})
 }
 

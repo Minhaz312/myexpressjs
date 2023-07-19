@@ -6,25 +6,34 @@ const userTable = JSON.parse(fs.readFileSync("database/users.json",{encoding:"ut
 const app = {}
 
 app.getAllUser = (req,res) => {
-    const list = [
-        {id:0,name:"ashik",mail:"ashik@mail.com"},
-        {id:1,name:"karim",mail:"karim@mail.com"},
-        {id:2,name:"faruk",mail:"faruk@mail.com"},
-        {name:"user get all functin called"}
-    ]
-    res.send(200,{},list)
+    console.log("usertable: ",JSON.stringify(userTable))
+    res.send(200,{},userTable)
 }
 
-app.registerUser = async (req,res) => {
+app.getUserById = (req,res) => {
+    console.log("cb called",req.params)
+    const {id} = req.params
+    const userById = userTable.find(user=> user.id===Number(id));
+    if(userById===undefined){
+        res.send(200,{},{success:false,user:{},message:"user not found with the id"})
+    }else{
+        res.send(200,{},{success:true,user:userById,message:"user found"})
+    }
+}
+
+app.registerUser = (req,res) => {
     const data = JSON.parse(req.body)
     let currentUsersList = userTable;
     if(userTable.find(user=>user.mail===data.mail)!==undefined){
-        console.log("user found")
         res.send(400,{},{success:false,message:"user already exist with the mail"})
     }else {
-        currentUsersList.push(data);
+        const newUser = {}
+        newUser.id = userTable[userTable.length-1].id+1
+        newUser.name = data.name
+        newUser.mail = data.mail
+        newUser.password = data.password
+        currentUsersList.push(newUser);
         fs.writeFile("database/users.json",JSON.stringify(currentUsersList),(err)=>{
-            console.log("inserted response: ",err);
             if(err){
                 res.send(500,{},{success:false,message:"Failed to register!"})
             }else{
@@ -32,6 +41,17 @@ app.registerUser = async (req,res) => {
             }
         })
     }
+}
+
+app.deleteUser = (req,res) => {
+    const {id} = req.params;
+    const user = userTable.find(user=>user.id===Number(id));
+    if(user!==undefined){
+        const index = userTable.indexOf(user);
+        userTable.splice(index,1)
+        fs.writeFileSync("database/users.json",JSON.stringify(userTable));
+    }
+    res.send(200,{},"no")
 }
 
 app.loginUser = (req,res) => {

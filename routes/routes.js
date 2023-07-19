@@ -8,8 +8,8 @@ const testMiddleware = require("../middlware/testMiddleware");
 
 const userRoutes = [
     {get:"/user/get/all",middleware:[],fn:userController.getAllUser},
-    {get:"/user/get/:id",middleware:[],fn:userController.loginUser},
-    {get:"/user/:id/delete",middleware:[],fn:userController.loginUser},
+    {get:"/user/get/:id",middleware:[],fn:userController.getUserById},
+    {delete:"/user/delete/:id",middleware:[],fn:userController.deleteUser},
     {post:"/user/add",middleware:[],fn:userController.registerUser},
 ]
 

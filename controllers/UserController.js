@@ -6,7 +6,7 @@ const userTable = JSON.parse(fs.readFileSync("database/users.json",{encoding:"ut
 const app = {}
 
 app.getAllUser = (req,res) => {
-    console.log("usertable: ",JSON.stringify(userTable))
+    console.log("usertabless: ",JSON.stringify(userTable))
     res.send(200,{},userTable)
 }
 
@@ -22,13 +22,14 @@ app.getUserById = (req,res) => {
 }
 
 app.registerUser = (req,res) => {
+    console.log("registration")
     const data = JSON.parse(req.body)
     let currentUsersList = userTable;
     if(userTable.find(user=>user.mail===data.mail)!==undefined){
         res.send(400,{},{success:false,message:"user already exist with the mail"})
     }else {
         const newUser = {}
-        newUser.id = userTable[userTable.length-1].id+1
+        newUser.id = userTable.length>0?userTable[userTable.length-1].id+1:1
         newUser.name = data.name
         newUser.mail = data.mail
         newUser.password = data.password

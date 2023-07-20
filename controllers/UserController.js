@@ -6,7 +6,6 @@ const userTable = JSON.parse(fs.readFileSync("database/users.json",{encoding:"ut
 const app = {}
 
 app.getAllUser = (req,res) => {
-    console.log("usertabless: ",JSON.stringify(userTable))
     res.send(200,{},userTable)
 }
 
@@ -51,8 +50,44 @@ app.deleteUser = (req,res) => {
         const index = userTable.indexOf(user);
         userTable.splice(index,1)
         fs.writeFileSync("database/users.json",JSON.stringify(userTable));
+        res.send(200,{},{success:true,message:"Deleted successfully!"});
+    }else{
+        res.send(400,{},{success:false,message:"User not found!"});
     }
-    res.send(200,{},"no")
+}
+
+app.userUpdate = (req,res) => {
+    const data = JSON.parse(req.body);
+    let updatedData = {}
+    console.log("data: ",data)
+    const user = userTable.find(user=>Number(user.id)===Number(data.id));
+    if(user!==undefined){
+        console.log("user: ",user)
+        updatedData.id = data.id
+        const index = userTable.indexOf(user);
+        console.log("index: ",index)
+        if(data.name!==undefined && data.name!==null && data.name!==""){
+            updatedData.name = data.name
+        }else{
+            updatedData.name = user.name
+        }
+        if(data.mail!==undefined && data.mail!==null && data.mail!==""){
+            updatedData.mail = data.mail
+        }else{
+            updatedData.mail = user.mail
+        }
+        if(data.password!==undefined && data.password!==null && data.password!==""){
+            updatedData.password = data.password
+        }else {
+            updatedData.password = user.password
+        }
+        console.log("updatedData: ",updatedData)
+        userTable.splice(index,1,updatedData)
+        fs.writeFileSync("database/users.json",JSON.stringify(userTable));
+        res.send(200,{},{success:true,message:"Updated successfully!"});
+    }else{
+        res.send(400,{},{success:false,message:"User not found"});
+    }
 }
 
 app.loginUser = (req,res) => {

@@ -9,9 +9,7 @@ if(fs.readFileSync("database/urls.json",{encoding:"utf-8"})!==""){
 
 const app = {}
 app.getAllUrl = (req,res) => {
-    console.log("get all url funcition called")
-    const list = []
-    res.send(500,{},list);
+    res.send(500,{},linkTable);
 }
 
 app.redirectUrl = (req,res) => {
@@ -34,7 +32,7 @@ app.redirectUrl = (req,res) => {
 }
 
 app.addUrl = (req,res) => {
-    const data = JSON.parse(req.body)
+    const data = req.body
     if(has(data,"userId")===true && has(data,"link")){
         const tiny = randomStringGenerator(8);
         const newLink = {id:1,userId:data.userId,link:data.link,tiny:tiny,totalRequest:0}
@@ -49,18 +47,55 @@ app.addUrl = (req,res) => {
 app.getUrlById = (req,res) => {
     try {
         const {id} = JSON.parse(req.params);
-        res.send(200,{},id);
+        const findUrl = linkTable.find(item=>Number(item.id)===Number(id))
+        if(findUrl!==undefined){
+            res.send(200,{},{success:true,url:findUrl});
+        }else{
+            res.send(400,{},{success:false,url:{}});
+        }
     } catch (error) {
-        res.send(500,{},"failed");
+        res.send(500,{},{success:false,url:{}});
     }
 }
 
 app.deleteUrl = (req,res) => {
-
+    try {
+        const {id} = JSON.parse(req.params);
+        const findUrl = linkTable.find(item=>Number(item.id)===Number(id))
+        if(findUrl!==undefined){
+            const index = linkTable.indexOf(findUrl);
+            linkTable.splice(index,1)
+            fs.writeFileSync("database/urls.json",JSON.stringify(linkTable));
+            res.send(200,{},{success:true,url:findUrl,message:"Deleted successfully"});
+        }else{
+            res.send(400,{},{success:false,url:{},message:"Failed to delete!"});
+        }
+    } catch (error) {
+        res.send(500,{},{success:false,url:{},message:"Failed to delete!"});
+    }
 }
 
 app.updateUrl = (req,res) => {
-
+    try {
+        const {id,link} = req.params
+        const findUrl = linkTable.find(item=>Number(item.id)===Number(id))
+        if(findUrl!==undefined) {
+            const index = linkTable.indexOf(findUrl);
+            const updatedLink = {}
+            updatedLink.id = findUrl.id;
+            updatedLink.userId = findUrl.userId;
+            updatedLink.link = link;
+            updatedLink.tiny = findUrl.tiny;
+            updatedLink.totalRequest = Number(findUrl.totalRequest)+1;
+            linkTable.splice(index,1,updatedLink)
+            fs.writeFileSync("database/urls.json",JSON.stringify(linkTable));
+            res.send(200,{},{success:true,message:"Updated successfully"});
+        }else{
+            res.send(400,{},{success:false,message:"Failed to update!"})
+        }
+    } catch (error) {
+        res.send(500,{},{success:false,message:"Failed to update!"})
+    }
 }
 
 module.exports = app;

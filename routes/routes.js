@@ -14,6 +14,7 @@ const userRoutes = [
 ]
 
 const urlRoutes = [
+    {get:"/",middleware:[],fn:(req,res)=>{res.send(200,{},"this is index page with get route")}},
     {get:"/:tiny",middleware:[],fn:urlController.redirectUrl},
     {post:"/url/add",middleware:[authMiddleware],fn:urlController.addUrl},
     {get:"/url/get/all",middleware:[authMiddleware],fn:urlController.getAllUrl},

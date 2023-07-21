@@ -5,20 +5,21 @@ const authMiddleware = require("../middlware/authMiddleware");
 // RULES: {method:"urlendpoint",middleware:[middlewareList],fn:callbackFunction}
 
 const userRoutes = [
-    {get:"/user/get/:id",middleware:[],fn:userController.getUserById},
-    {get:"/user/get/all",middleware:[],fn:userController.getAllUser},
-    {delete:"/user/delete/:id",middleware:[],fn:userController.deleteUser},
-    {post:"/user/add",middleware:[],fn:userController.registerUser},
-    {put:"/user/update",middleware:[],fn:userController.userUpdate},
+    {get:"/user/get/:id",middleware:[authMiddleware],fn:userController.getUserById},
+    {get:"/user/get/all",middleware:[authMiddleware],fn:userController.getAllUser},
+    {delete:"/user/delete/:id",middleware:[authMiddleware],fn:userController.deleteUser},
+    {post:"/user/add",middleware:[authMiddleware],fn:userController.registerUser},
+    {put:"/user/update",middleware:[authMiddleware],fn:userController.userUpdate},
+    {post:"/user/login",middleware:[],fn:userController.loginUser},
 ]
 
 const urlRoutes = [
-    {get:"/",middleware:[authMiddleware],fn:urlController.getAllUrl},
-    {post:"/add",middleware:[authMiddleware],fn:urlController.addUrl},
-    {get:"/get/all",middleware:[authMiddleware],fn:urlController.getAllUrl},
-    {get:"/get/:id",middleware:[authMiddleware],fn:urlController.getUrlById},
-    {delete:"/delete/:id",middleware:[authMiddleware],fn:urlController.deleteUrl},
-    {put:"/udpate",middleware:[authMiddleware],fn:urlController.updateUrl},
+    {get:"/:tiny",middleware:[],fn:urlController.redirectUrl},
+    {post:"/url/add",middleware:[authMiddleware],fn:urlController.addUrl},
+    {get:"/url/get/all",middleware:[authMiddleware],fn:urlController.getAllUrl},
+    {get:"/url/get/:id",middleware:[authMiddleware],fn:urlController.getUrlById},
+    {delete:"/url/delete/:id",middleware:[authMiddleware],fn:urlController.deleteUrl},
+    {put:"/url/udpate",middleware:[authMiddleware],fn:urlController.updateUrl},
 ]
 
 // this file must export routes array

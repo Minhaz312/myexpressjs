@@ -1,4 +1,8 @@
 const fs = require("node:fs")
+const jwt = require("jsonwebtoken")
+const env = require("../config/env")
+
+const SECRET = env.JWT_SECRET
 
 const userTable = JSON.parse(fs.readFileSync("database/users.json",{encoding:"utf-8"}))
 
@@ -10,7 +14,6 @@ app.getAllUser = (req,res) => {
 }
 
 app.getUserById = (req,res) => {
-    console.log("cb called",req.params)
     const {id} = req.params
     const userById = userTable.find(user=> user.id===Number(id));
     if(userById===undefined){
@@ -91,9 +94,19 @@ app.userUpdate = (req,res) => {
 }
 
 app.loginUser = (req,res) => {
-    console.log("req.params: ",req.params)
-    // res.send(res,200,`my id is: ${req.params.id}`)
-    res.send(200,{},`${req.params.id}`)
+    try {
+        const {mail,password} = JSON.parse(req.body);
+        const user = userTable.find(item=>item.mail===mail&item.password.toString()===password.toString());
+        console.log("user: ",user)
+        if(user!==undefined){
+            const token = jwt.sign({user:mail,loggedIn:true},SECRET,{algorithm:"HS256"});
+            res.send(200,{},{success:true,token:token,message:"user loggedin"})
+        }else{
+            res.send(400,{},{success:false,token:null,message:"Invalid email or password"})
+        }
+    } catch (error) {
+        res.send(500,{},{success:false,token:null,message:"Invalid email or password"})
+    }
 }
 
 module.exports = app;

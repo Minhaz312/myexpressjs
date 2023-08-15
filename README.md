@@ -1,5 +1,5 @@
-# myexpress.js
-myexpress.js is my won custom nodejs library like express.js, it is my practice project of nodejs learning.
+# TinyUrl project
+This api is built to short a long url.
 
 ## how to run
 clone the project and run (to use there is no need to install any dependency)
@@ -11,8 +11,8 @@ API documentation link [https://documenter.getpostman.com/view/16162640/2s946k7q
 
 #### step 1
 ```javascript
-const myexpress = require("./lib/mypress");
-myexpress.createServer(3000,{
+const app = require("./lib/mypress");
+app.createServer(3000,{
     apiVersion:1
 });
 ```
